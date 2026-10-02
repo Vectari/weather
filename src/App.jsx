@@ -166,6 +166,22 @@ function getPeriodAssessment(models, hours, from, to) {
 }
 
 function PeriodCard({ title, icon, from, to, models, hours }) {
+  if (hours.length === 0) {
+    return (
+      <section className="period-card empty-period">
+        <div className="empty-period-icon">{icon}</div>
+
+        <div>
+          <div className="period-title">{title}</div>
+
+          <div className="empty-period-text">
+            Ten przedział czasowy już minął.
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   const assessment = getPeriodAssessment(models, hours, from, to);
 
   const periodHours = getPeriod(hours, from, to);
@@ -249,7 +265,13 @@ function PeriodCard({ title, icon, from, to, models, hours }) {
 }
 
 function App() {
-  const [selectedDay, setSelectedDay] = useState(0);
+  const getInitialDay = () => {
+    const hour = new Date().getHours();
+
+    return hour >= 19 ? 1 : 0;
+  };
+
+  const [selectedDay, setSelectedDay] = useState(getInitialDay);
 
   const [models, setModels] = useState(
     MODELS.map((model) => ({
@@ -351,9 +373,7 @@ function App() {
       <div className="container">
         <header className="header">
           <div>
-            <div className="location">{LOCATION.name}</div>
-
-            <h1>Pogoda</h1>
+            <div className="location">Pogoda ‧ {LOCATION.name}</div>
 
             <div className="date">{formatDate(selectedDate)}</div>
           </div>

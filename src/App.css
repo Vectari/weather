@@ -20,6 +20,7 @@ body {
     "Segoe UI",
     sans-serif;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 button {
@@ -28,7 +29,7 @@ button {
 
 .app {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: 16px 10px 30px;
 }
 
@@ -352,4 +353,21 @@ footer {
   .cell-weather {
     font-size: 12px;
   }
+}
+
+.empty-period {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+}
+
+.empty-period-icon {
+  font-size: 22px;
+}
+
+.empty-period-text {
+  margin-top: 3px;
+  color: #737d8a;
+  font-size: 10px;
 }
