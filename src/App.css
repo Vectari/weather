@@ -1,0 +1,355 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #0f1115;
+  color: #f1f3f5;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  padding: 16px 10px 30px;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.location {
+  color: #858e9b;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 25px;
+  line-height: 1.15;
+}
+
+.date {
+  margin-top: 3px;
+  color: #9da5b0;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.refresh-button {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #292e36;
+  border-radius: 11px;
+  background: #171a20;
+  color: #fff;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+/* DAY SWITCH */
+
+.day-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 10px;
+  background: #171a20;
+  border: 1px solid #292e36;
+  border-radius: 11px;
+}
+
+.day-switch button {
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #7f8895;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.day-switch button.active {
+  background: #292e36;
+  color: #fff;
+}
+
+/* QUICK SUMMARY */
+
+.quick-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.summary-card {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: #171a20;
+  border: 1px solid #292e36;
+  border-radius: 12px;
+}
+
+.summary-icon {
+  flex: 0 0 auto;
+  font-size: 22px;
+}
+
+.summary-period {
+  color: #7f8895;
+  font-size: 10px;
+}
+
+.summary-title {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* PERIOD */
+
+.period-card {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 11px;
+  background: #171a20;
+  border: 1px solid #292e36;
+  border-radius: 13px;
+}
+
+.period-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.period-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.period-summary {
+  margin-top: 2px;
+  color: #b7bec8;
+  font-size: 11px;
+}
+
+.period-temp {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.period-description {
+  margin-bottom: 8px;
+  color: #737d8a;
+  font-size: 10px;
+}
+
+/* COMPACT FORECAST */
+
+.forecast-table {
+  width: 100%;
+}
+
+.forecast-head,
+.model-row {
+  display: grid;
+  grid-template-columns: 47px repeat(3, minmax(0, 1fr));
+  width: 100%;
+}
+
+.forecast-head {
+  color: #69727f;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.forecast-head > div,
+.model-row > div {
+  min-width: 0;
+  padding: 5px 2px;
+  text-align: center;
+}
+
+.forecast-head > div:first-child,
+.model-row > div:first-child {
+  text-align: left;
+}
+
+.model-row {
+  border-top: 1px solid #292e36;
+}
+
+.model-name {
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.forecast-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.cell-temp {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.cell-weather {
+  font-size: 13px;
+}
+
+.cell-rain {
+  color: #76b6ff;
+  font-size: 9px;
+}
+
+.cell-wind {
+  color: #737d8a;
+  font-size: 8px;
+}
+
+.legend {
+  margin-top: 6px;
+  color: #626c79;
+  font-size: 8px;
+  text-align: right;
+}
+
+/* MODELS */
+
+.models-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 11px;
+  background: #171a20;
+  border: 1px solid #292e36;
+  border-radius: 12px;
+}
+
+.models-title {
+  color: #707987;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.model-status-list {
+  display: flex;
+  gap: 9px;
+}
+
+.model-status {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+}
+
+.status-dot {
+  color: #67c982;
+  font-size: 7px;
+}
+
+/* LOADING */
+
+.loading {
+  padding: 50px 10px;
+  color: #7f8895;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* FOOTER */
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+  color: #535c68;
+  font-size: 8px;
+}
+
+/* VERY SMALL PHONES */
+
+@media (max-width: 360px) {
+  .app {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .quick-summary {
+    gap: 5px;
+  }
+
+  .summary-card {
+    padding: 8px;
+  }
+
+  .summary-title {
+    font-size: 10px;
+  }
+
+  .period-card {
+    padding: 9px 8px;
+  }
+
+  .forecast-head,
+  .model-row {
+    grid-template-columns: 43px repeat(3, minmax(0, 1fr));
+  }
+
+  .forecast-cell {
+    gap: 1px;
+  }
+
+  .cell-weather {
+    font-size: 12px;
+  }
+}
