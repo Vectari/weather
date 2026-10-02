@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const LOCATION = {
@@ -42,7 +42,7 @@ const weatherCodes = {
 };
 
 function getWeather(code) {
-  return weatherCodes[code] || ["❓", "nieznane"];
+  return weatherCodes[code] || ["❓", "unknown"];
 }
 
 function formatHour(dateString) {
@@ -57,7 +57,22 @@ function formatDate(date) {
   }).format(date);
 }
 
+function getLocalDateString(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 function getRelevantHours(times, dayOffset) {
+  const target = new Date();
+
+  target.setHours(0, 0, 0, 0);
+  target.setDate(target.getDate() + dayOffset);
+
+  const targetDate = getLocalDateString(target);
+
   return times
     .map((time, index) => ({
       time,
@@ -66,15 +81,7 @@ function getRelevantHours(times, dayOffset) {
       hour: Number(time.slice(11, 13)),
     }))
     .filter(({ hour }) => [8, 9, 10, 18, 19].includes(hour))
-    .filter(({ date }) => {
-      const target = new Date();
-      target.setHours(0, 0, 0, 0);
-      target.setDate(target.getDate() + dayOffset);
-
-      const targetDate = target.toISOString().slice(0, 10);
-
-      return date === targetDate;
-    });
+    .filter(({ date }) => date === targetDate);
 }
 
 function getPeriod(hours, from, to) {
@@ -111,6 +118,9 @@ function getPeriodAssessment(models, hours, from, to) {
       title: "No data",
       icon: "❓",
       description: "Forecast data could not be loaded.",
+      averageTemp: null,
+      averageWind: null,
+      maxGust: null,
     };
   }
 
@@ -183,7 +193,6 @@ function PeriodCard({ title, icon, from, to, models, hours }) {
   }
 
   const assessment = getPeriodAssessment(models, hours, from, to);
-
   const periodHours = getPeriod(hours, from, to);
 
   return (
@@ -264,31 +273,31 @@ function PeriodCard({ title, icon, from, to, models, hours }) {
   );
 }
 
+function getInitialDay() {
+  return new Date().getHours() >= 19 ? 1 : 0;
+}
+
 function App() {
-  const getInitialDay = () => {
-    const hour = new Date().getHours();
-
-    return hour >= 19 ? 1 : 0;
-  };
-
   const [selectedDay, setSelectedDay] = useState(getInitialDay);
 
   const [models, setModels] = useState(
     MODELS.map((model) => ({
       ...model,
       data: null,
-      loading: false,
+      loading: true,
       error: false,
     })),
   );
 
   const [lastUpdate, setLastUpdate] = useState(null);
 
+  const currentDateRef = useRef(getLocalDateString(new Date()));
+
   const fetchWeather = async () => {
     setModels((current) =>
       current.map((model) => ({
         ...model,
-        loading: false,
+        loading: true,
         error: false,
       })),
     );
@@ -341,6 +350,7 @@ function App() {
     setLastUpdate(new Date());
   };
 
+  // Initial weather fetch
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchWeather();
@@ -348,6 +358,34 @@ function App() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Automatic day handling
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      const today = getLocalDateString(now);
+
+      // New calendar day detected
+      if (today !== currentDateRef.current) {
+        currentDateRef.current = today;
+
+        setSelectedDay(0);
+        fetchWeather();
+
+        return;
+      }
+
+      // After 19:00 automatically show tomorrow
+      if (hour >= 19 && selectedDay === 0) {
+        setSelectedDay(1);
+      }
+    };
+
+    const timer = setInterval(checkTime, 60 * 1000);
+
+    return () => clearInterval(timer);
+  }, [selectedDay]);
 
   const hours = useMemo(() => {
     const firstModel = models.find((model) => model.data);
@@ -373,7 +411,7 @@ function App() {
       <div className="container">
         <header className="header">
           <div>
-            <div className="location">Weather ‧ {LOCATION.name}</div>
+            <div className="location">{LOCATION.name}</div>
 
             <div className="date">{formatDate(selectedDate)}</div>
           </div>
@@ -472,7 +510,7 @@ function App() {
 
           {lastUpdate && (
             <span>
-              {lastUpdate.toLocaleTimeString("pl-PL", {
+              {lastUpdate.toLocaleTimeString("en-GB", {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
