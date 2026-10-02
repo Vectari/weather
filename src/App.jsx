@@ -16,29 +16,29 @@ const MODELS = [
 const API_BASE = "https://api.open-meteo.com/v1/forecast";
 
 const weatherCodes = {
-  0: ["☀️", "bezchmurnie"],
-  1: ["🌤️", "głównie pogodnie"],
-  2: ["⛅", "częściowe zachmurzenie"],
-  3: ["☁️", "pochmurno"],
-  45: ["🌫️", "mgła"],
-  48: ["🌫️", "mgła"],
-  51: ["🌦️", "lekka mżawka"],
-  53: ["🌦️", "mżawka"],
-  55: ["🌧️", "mocna mżawka"],
-  61: ["🌦️", "lekki deszcz"],
-  63: ["🌧️", "deszcz"],
-  65: ["🌧️", "mocny deszcz"],
-  71: ["🌨️", "lekki śnieg"],
-  73: ["🌨️", "śnieg"],
-  75: ["❄️", "mocny śnieg"],
-  80: ["🌦️", "przelotny deszcz"],
-  81: ["🌧️", "przelotny deszcz"],
-  82: ["⛈️", "silny przelotny deszcz"],
-  85: ["🌨️", "przelotny śnieg"],
-  86: ["🌨️", "silny przelotny śnieg"],
-  95: ["⛈️", "burza"],
-  96: ["⛈️", "burza z gradem"],
-  99: ["⛈️", "burza z gradem"],
+  0: ["☀️", "clear sky"],
+  1: ["🌤️", "mainly clear"],
+  2: ["⛅", "partly cloudy"],
+  3: ["☁️", "overcast"],
+  45: ["🌫️", "fog"],
+  48: ["🌫️", "fog"],
+  51: ["🌦️", "light drizzle"],
+  53: ["🌦️", "drizzle"],
+  55: ["🌧️", "heavy drizzle"],
+  61: ["🌦️", "light rain"],
+  63: ["🌧️", "rain"],
+  65: ["🌧️", "heavy rain"],
+  71: ["🌨️", "light snow"],
+  73: ["🌨️", "snow"],
+  75: ["❄️", "heavy snow"],
+  80: ["🌦️", "showers"],
+  81: ["🌧️", "rain showers"],
+  82: ["⛈️", "heavy showers"],
+  85: ["🌨️", "snow showers"],
+  86: ["🌨️", "heavy snow showers"],
+  95: ["⛈️", "thunderstorm"],
+  96: ["⛈️", "thunderstorm with hail"],
+  99: ["⛈️", "thunderstorm with hail"],
 };
 
 function getWeather(code) {
@@ -50,7 +50,7 @@ function formatHour(dateString) {
 }
 
 function formatDate(date) {
-  return new Intl.DateTimeFormat("pl-PL", {
+  return new Intl.DateTimeFormat("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -108,9 +108,9 @@ function getPeriodAssessment(models, hours, from, to) {
 
   if (!rainValues.length) {
     return {
-      title: "Brak danych",
+      title: "No data",
       icon: "❓",
-      description: "Nie udało się pobrać prognozy.",
+      description: "Forecast data could not be loaded.",
     };
   }
 
@@ -124,24 +124,24 @@ function getPeriodAssessment(models, hours, from, to) {
   let icon;
 
   if (averageRain < 20) {
-    title = "raczej sucho";
+    title = "mostly dry";
     icon = "☀️";
   } else if (averageRain < 50) {
-    title = "możliwy deszcz";
+    title = "possible rain";
     icon = "🌦️";
   } else {
-    title = "duże ryzyko deszczu";
+    title = "high chance of rain";
     icon = "🌧️";
   }
 
   let description;
 
   if (spread <= 15) {
-    description = "Modele są bardzo zgodne.";
+    description = "Models are in close agreement.";
   } else if (spread <= 30) {
-    description = "Modele są umiarkowanie zgodne.";
+    description = "Models show moderate agreement.";
   } else {
-    description = "Modele różnią się w opadach.";
+    description = "Models differ on precipitation.";
   }
 
   const averageTemp = temperatures.length
@@ -175,7 +175,7 @@ function PeriodCard({ title, icon, from, to, models, hours }) {
           <div className="period-title">{title}</div>
 
           <div className="empty-period-text">
-            Ten przedział czasowy już minął.
+            This time period has already passed.
           </div>
         </div>
       </section>
@@ -259,7 +259,7 @@ function PeriodCard({ title, icon, from, to, models, hours }) {
         ))}
       </div>
 
-      <div className="legend">🌡 temp. · 💧 opady · 💨 km/h</div>
+      <div className="legend">🌡 temp. · 💧 precipitation · 💨 km/h</div>
     </section>
   );
 }
@@ -373,7 +373,7 @@ function App() {
       <div className="container">
         <header className="header">
           <div>
-            <div className="location">Pogoda ‧ {LOCATION.name}</div>
+            <div className="location">Weather ‧ {LOCATION.name}</div>
 
             <div className="date">{formatDate(selectedDate)}</div>
           </div>
@@ -392,14 +392,14 @@ function App() {
             className={selectedDay === 0 ? "active" : ""}
             onClick={() => setSelectedDay(0)}
           >
-            DZIŚ
+            TODAY
           </button>
 
           <button
             className={selectedDay === 1 ? "active" : ""}
             onClick={() => setSelectedDay(1)}
           >
-            JUTRO
+            TOMORROW
           </button>
         </div>
 
@@ -411,7 +411,7 @@ function App() {
               <div className="summary-period">08:00–10:00</div>
 
               <div className="summary-title">
-                RANO: {morningAssessment.title}
+                MORNING: {morningAssessment.title}
               </div>
             </div>
           </div>
@@ -423,14 +423,14 @@ function App() {
               <div className="summary-period">18:00–19:00</div>
 
               <div className="summary-title">
-                WIECZOREM: {eveningAssessment.title}
+                EVENING: {eveningAssessment.title}
               </div>
             </div>
           </div>
         </section>
 
         {loading ? (
-          <div className="loading">Pobieranie prognozy…</div>
+          <div className="loading">Loading forecast…</div>
         ) : (
           <>
             <PeriodCard
@@ -454,7 +454,7 @@ function App() {
         )}
 
         <section className="models-status">
-          <div className="models-title">MODELE</div>
+          <div className="models-title">MODELS</div>
 
           <div className="model-status-list">
             {models.map((model) => (
